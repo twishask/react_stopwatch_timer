@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
+import Sound from 'react-sound';
+import timerSound from './doubleBeep.mp3'
 
 class App extends Component {
     constructor(){
@@ -15,13 +17,14 @@ class App extends Component {
         tsec: 0,
         tmin:0,
         thr:0,
-        };
+        sound:"STOPPED"
       };
+    };
     
     startStopwatch = e => {
       this.setState ({
         isDisabled : true
-        });
+      });
       this.stopwatchInterval = setInterval(
         function(){
           var shr = Math.floor(this.state.stime / 3600)
@@ -40,7 +43,7 @@ class App extends Component {
     stopStopwatch = e => {
         clearInterval(this.stopwatchInterval);
         this.setState ({
-        isDisabled : false
+          isDisabled : false
         });
     }
     
@@ -56,35 +59,49 @@ class App extends Component {
     handleInput = e => {
       this.setState ({
         timerInput: e.target.value,
-        })
+      })
     }
     
     startTimer = e => {
       this.setState ({
         isDisabled : true
-        });
+      });
       if (this.state.timerInput > 0){
         this.timerInterval = setInterval(
-        function(){
-          var thr = Math.floor(this.state.timerInput / 3600)
-          var tmin = Math.floor((this.state.timerInput - 3600*thr) / 60)
-          var tsec = this.state.timerInput % 60
-          console.log(thr,tmin,tsec)
-          this.setState({
-            timerInput: this.state.timerInput-1,
-            thr: thr,
-            tmin: tmin,
-            tsec: tsec,
-          })
-        }.bind(this),
+          function(){
+            var thr = Math.floor(this.state.timerInput / 3600)
+            var tmin = Math.floor((this.state.timerInput - 3600*thr) / 60)
+            var tsec = this.state.timerInput % 60
+            if (this.state.timerInput < 0) {
+              this.setState({
+                 sound: "PLAYING"
+              })
+              {this.stopTimer()}
+              alert("Time up!")
+            }
+            else{
+              this.setState({
+                timerInput: this.state.timerInput-1,
+                thr: thr,
+                tmin: tmin,
+                tsec: tsec,
+              })
+            }
+          }.bind(this),
         1000);
       }
+    }
+    
+    stopSound = e => {
+      this.setState ({
+        sound: "STOPPED"
+      })
     }
     
     stopTimer = e => {
         clearInterval(this.timerInterval);
         this.setState ({
-        isDisabled : false
+          isDisabled : false
         });
     }
     
@@ -114,7 +131,7 @@ class App extends Component {
           <input type="button" onClick={this.resetStopwatch} value="Reset" />
         </div>
         <div className="Timer">
-        <h2>Timer</h2>
+          <h2>Timer</h2>
           <br></br>
           <div className="circle">
             {this.state.thr} : {this.state.tmin} : {this.state.tsec} 
@@ -126,6 +143,7 @@ class App extends Component {
           <input type="button" onClick={this.startTimer} disabled={this.state.isDisabled} value="Start"/>
           <input type="button" onClick={this.stopTimer} value="Stop" />
           <input type="button" onClick={this.resetTimer} value="Reset" />
+          <Sound url={timerSound} playStatus={this.state.sound} onFinishedPlaying={this.stopSound} />
         </div>
       </div>
     );
