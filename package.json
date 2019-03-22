@@ -10,7 +10,6 @@
   },
   "devDependencies": {},
   "scripts": {
-    "start": "react-scripts start",
   },
   "repository": {
     "type": "git",
