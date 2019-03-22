@@ -10,7 +10,7 @@
   },
   "devDependencies": {},
   "scripts": {
-    "start": "pwd"
+    "start": "react-scripts start"
   },
   "repository": {
     "type": "git",
